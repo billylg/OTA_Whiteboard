@@ -49,7 +49,7 @@ typedef enum network_role_ {
 
 typedef struct color_marker_ {
     ui_color_t color;
-    int boundary;
+    NSInteger boundary;
 } color_marker_t;
 
 @interface Draw2ViewController : UIViewController <NSStreamDelegate, Draw2InputViewDelegate,
@@ -70,8 +70,8 @@ typedef struct color_marker_ {
     NSOperationQueue* fromServerQ;
     draw_mode_t mode;
     ui_color_t color;
-    int readIndex;
-    int pageIndex;
+    NSInteger readIndex;
+    NSInteger pageIndex;
     network_op_t netOp;
     UIImage *imageToUpload;
     NSInteger fileSize;

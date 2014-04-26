@@ -76,19 +76,19 @@
     CFReadStreamRef readStream;
     CFWriteStreamRef writeStream;
     
-    NSLog(@"server IP: %@, port: %d, role: %d", ip_address, port, role);
+    NSLog(@"server IP: %@, port: %ld, role: %d", ip_address, (long)port, role);
     /* don't need to enable read stream for sending screen shot */
     if (port != 8080) {
         /* schedule the stream socket on main runloop since the thread's runloop is short lived */
         if (role == HOST) {
-            CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)ip_address, port, NULL, &writeStream);
+            CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)ip_address, (UInt32)port, NULL, &writeStream);
             imageOutStream = (NSOutputStream *)writeStream;
             [imageOutStream setDelegate:self];
             [imageOutStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
             [imageOutStream open];
             NSLog(@"host connected");
         } else if (role == CLIENT) {
-            CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)ip_address, port, &readStream, NULL);
+            CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)ip_address, (UInt32)port, &readStream, NULL);
             imageInStream = (NSInputStream *)readStream;
             [imageInStream setDelegate:self];
             [imageInStream scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
@@ -96,7 +96,7 @@
             NSLog(@"client connected");
         }
     } else {
-        CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)ip_address, port, &readStream, &writeStream);
+        CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)ip_address, (UInt32)port, &readStream, &writeStream);
         inputStream = (NSInputStream *)readStream;
         outputStream = (NSOutputStream *)writeStream;
         [inputStream setDelegate:self];
@@ -115,12 +115,9 @@
     [drawView updateView:context.dataPointArray withColor:context.colorString];
 }
 
-/* TODO: lots of object not freed in this function 
-   make sure to release them during code clean up
- */
 - (void) receiveDataFromServer:(NSString *)input
 {
-    int j, input_len;
+    NSInteger j, input_len;
     CGPoint point;
     NSValue *pointValue;
     NSString *userName;
@@ -128,7 +125,7 @@
     SBJsonParser *jsonParser = [[SBJsonParser alloc] init];
     NSMutableArray *inputArray = [[NSMutableArray alloc] init];
     //NSMutableString *jsonString = [[NSMutableString alloc] initWithCapacity:40];
-    int index = 0;
+    NSInteger index = 0;
     
     /* task to be run in NSOperation Queue */
     NSLog(@"server said: %@", input);
@@ -174,7 +171,7 @@
                     if ([dict valueForKey:@"length"] != nil) {
                         fileSize = [[dict valueForKey:@"length"] integerValue];
                     }
-                    NSLog(@"new server port is %@, received file size: %d", portStr, fileSize);
+                    NSLog(@"new server port is %@, received file size: %ld", portStr, (long)fileSize);
                     /* connect to server to download background image, the order to open socket and send ACK cannot be changed */
                     [self initNetworkCommunication:self.serverIP withPort:[portStr intValue] role:CLIENT];
                 } else {
@@ -187,13 +184,13 @@
                         NSData *dataObj = UIImageJPEGRepresentation(imageToUpload, 1.0);
                         const uint8_t *buf = [dataObj bytes];
                         NSInteger size = [dataObj length];
-                        NSLog(@"prepare to send %d bytes (image) to server", size);
+                        NSLog(@"prepare to send %ld bytes (image) to server", (long)size);
                         NSInteger bytesWritten, total = 0;
                         while (size - total > 0) {
                             bytesWritten = [imageOutStream write:buf maxLength:size];
                             total += bytesWritten;
                             buf += bytesWritten;
-                            NSLog(@"sent %d bytes", bytesWritten);
+                            NSLog(@"sent %ld bytes", (long)bytesWritten);
                         }
                         [imageOutStream close];
                         [imageOutStream release];
@@ -240,7 +237,7 @@
                         if (pointValue != nil) {
                             [tempArray addObject:pointValue];
                         }
-                        NSLog(@"there are %d element in the array\n", [dataArray count]);
+                        NSLog(@"there are %lu element in the array\n", (unsigned long)[dataArray count]);
                         for (j = 0; j < [dataArray count]; j++) {
                             NSDictionary *element = (NSDictionary *)[dataArray objectAtIndex:j];
                             point.x = [[element valueForKey:@"x"] doubleValue];
@@ -268,7 +265,7 @@
 
 - (void)stream:(NSStream *)theStream handleEvent:(NSStreamEvent)streamEvent 
 {
-    int len;
+    NSInteger len;
     NSMutableString *jsonString = [[NSMutableString alloc] initWithCapacity:40];
     
 	switch (streamEvent) {
@@ -297,14 +294,14 @@
                  */
                 uint8_t buffer[1024];  
                 len = [imageInStream read:buffer maxLength:sizeof(buffer)];
-                NSLog(@"received %d bytes from server", len);
+                NSLog(@"received %ld bytes from server", (long)len);
                 if (len > 0) {
                     [rawData appendBytes:(const void *)buffer length:len];
                     rawBytesRead += len;
                 }
                 if (rawBytesRead >= fileSize) {
                     /* we are done, update the view with image we just received */
-                    NSLog(@"we are done, received total of %d bytes", rawBytesRead);
+                    NSLog(@"we are done, received total of %ld bytes", (long)rawBytesRead);
                     [self updateImageView:rawData];
                     [rawData release];
                 }
@@ -324,15 +321,15 @@
                 [jsonString appendString:@"{\"request\":\"ackGetState\", \"clientHost\":"];
                 [jsonString appendFormat:@"\"%@\"", clientHost];
                 [jsonString appendString:@", \"clientPort\": "];
-                [jsonString appendFormat:@"%d", clientPort];
+                [jsonString appendFormat:@"%ld", (long)clientPort];
                 [jsonString appendString:@", \"length\": "];
-                [jsonString appendFormat:@"%d", size];
+                [jsonString appendFormat:@"%ld", (long)size];
                 [jsonString appendString:@", \"sessionID\": "];
                 [jsonString appendFormat:@"\"%@\"", self.sessionID];
                 [jsonString appendString:@"}\n"];
                 NSLog(@"json string:\n%@", jsonString);
                 NSData *jsonData = [[NSData alloc] initWithData:[jsonString dataUsingEncoding:NSASCIIStringEncoding]];
-                NSLog(@"size of image to be uploaded is %d", size);
+                NSLog(@"size of image to be uploaded is %ld", (long)size);
                 [outputStream write:[jsonData bytes] maxLength:[jsonData length]];
                 [jsonData release];
             } else if (theStream == imageInStream) {
@@ -364,6 +361,8 @@
                 [inputStream close];
                 [outputStream close];
             }
+        default:
+            break;
         break;
     }
     [jsonString release];
@@ -386,7 +385,7 @@
 
 - (void) uploadTask
 {
-    int size, i, max_range;
+    NSInteger size, i, max_range;
     ui_color_t color_value;
     CGPoint point;
     NSMutableString *coordValues = [[NSMutableString alloc] initWithCapacity:20];
@@ -627,7 +626,7 @@
          withUserName:(NSString *)user_name
          isConfirm:(Boolean)confirm
 {
-    int length;
+    NSInteger length;
     NSMutableString *jsonString;
     
     if (confirm) {
@@ -654,7 +653,7 @@
             [jsonString appendFormat:@"\"%@\"}", self.sessionID];
         }
         if (connected) {
-            NSLog(@"debug: stream status %d", [outputStream streamStatus]);
+            NSLog(@"debug: stream status %lu", [outputStream streamStatus]);
             NSData *jsonData = [[NSData alloc] initWithData:[jsonString dataUsingEncoding:NSASCIIStringEncoding]];
             length = [outputStream write:[jsonData bytes] maxLength:[jsonData length]];
             if (length < 0) {
@@ -665,12 +664,13 @@
                 [inputStream release];
                 [outputStream release];
                 [connectionButton setImage:[UIImage imageNamed:@"disconnected"] forState:UIControlStateNormal];
-                [self dismissModalViewControllerAnimated:YES];
-                UIAlertView *alert;
-                alert = [[UIAlertView alloc] initWithTitle:nil message:@"Network connection failed,\nplease try again"
-                                             delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                [alert show];
-                [alert release];
+                [self dismissViewControllerAnimated:YES completion:^{
+                    UIAlertView *alert;
+                    alert = [[UIAlertView alloc] initWithTitle:nil message:@"Network connection failed,\nplease try again"
+                                                      delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                    [alert show];
+                    [alert release];
+                }];
                 return;
             }
             if (netOp == START_SESSION) {
@@ -685,7 +685,8 @@
             [jsonString release];
         }
     }
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:^{
+    }];
 }
 
 - (IBAction) startSession:(id)sender
@@ -702,7 +703,8 @@
     modalView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     modalView.modalPresentationStyle = UIModalPresentationFormSheet;
     netOp = START_SESSION;
-    [self presentModalViewController:modalView animated:YES];
+    [self presentViewController:modalView animated:YES completion:^{
+    }];
     [modalView release];
 }
 
@@ -713,7 +715,8 @@
     modalView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     modalView.modalPresentationStyle = UIModalPresentationFormSheet;
     netOp = JOIN_SESSION;
-    [self presentModalViewController:modalView animated:YES];
+    [self presentViewController:modalView animated:YES completion:^{
+    }];
     [modalView release];
 }
 
@@ -754,7 +757,7 @@
     [request startAsynchronous];
     
     /* clear points here, get the points from server to reconstruct the whole drawing */
-    NSLog(@"sending %d points to the server\n", [points count]);
+    NSLog(@"sending %lu points to the server\n", (unsigned long)[points count]);
     [points removeAllObjects];
     [self.view drawRect:[self.view bounds]];
     [coordValues release];
@@ -795,7 +798,7 @@
         for (j = 0; j < [dataArray count]; j++) {
             NSDictionary *element = (NSDictionary *)[dataArray objectAtIndex:j];
             NSArray *coordArray = [element valueForKey:@"data"];
-            NSLog(@"there are %d element in the array\n", [coordArray count]);
+            NSLog(@"there are %lu element in the array\n", (unsigned long)[coordArray count]);
             for (i = 0; i < [coordArray count]; i++) {
                 NSDictionary *coordinatePt = (NSDictionary *)[coordArray objectAtIndex:i];
                 point.x = [[coordinatePt valueForKey:@"x"] doubleValue];
@@ -907,7 +910,7 @@
     [imgView.image drawAtPoint:CGPointMake(0.0, 0.0)];
     UIGraphicsEndImageContext();
 #endif
-    NSLog(@"image orientation displayed on screen is %d", [imgView.image imageOrientation]);
+    NSLog(@"image orientation displayed on screen is %ld", [imgView.image imageOrientation]);
     //[self dismissModalViewControllerAnimated:YES];
 }
 
@@ -934,7 +937,7 @@
 
 - (IBAction) setColor:(id)sender
 {
-    int number;
+    NSInteger number;
     ui_color_t old_color;
     UIButton *button = (UIButton *)sender;
     
