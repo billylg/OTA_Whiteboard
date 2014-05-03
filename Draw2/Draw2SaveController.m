@@ -21,16 +21,9 @@
     self = [super initWithStyle:style];
     if (self) {
         // Custom initialization
-        cellTitle = [[NSArray arrayWithObjects:@"Email", @"Photo Album", nil] retain];
+        self.cellTitle = [NSArray arrayWithObjects:@"Email", @"Photo Album", nil];
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [cellTitle release];
-    [mainImage release];
-    [super dealloc];
 }
 
 - (void)didReceiveMemoryWarning
@@ -107,7 +100,7 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
     // Configure the cell...
@@ -189,7 +182,7 @@
         [picker setMessageBody:emailBody isHTML:NO];
         
         // Create NSData object as JPG image data from camera image
-        NSData *data = UIImageJPEGRepresentation(mainImage, 1.0);
+        NSData *data = UIImageJPEGRepresentation(self.mainImage, 1.0);
         
         // Attach image data to the email
         // 'CameraImage.png' is the file name that will be attached to the email
@@ -199,13 +192,12 @@
         [self presentModalViewController:picker animated:YES];
         
         // Release picker
-        [picker release];
         [self.delegate disMissSaveDialog];
         
     } else if (indexPath.row == 1) {
         /* save to photo album */
         NSLog(@"photo album selected");
-        UIImageWriteToSavedPhotosAlbum(mainImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+        UIImageWriteToSavedPhotosAlbum(self.mainImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
         [self.delegate disMissSaveDialog];
     }
 }
@@ -218,12 +210,10 @@
         // show error message
         alert = [[UIAlertView alloc] initWithTitle:nil message:@"Fail to save drawing to album" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [alert show];
-        [alert release];
     } else {
         // show success message
         alert = [[UIAlertView alloc] initWithTitle:nil message:@"Drawing successfully saved to album" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [alert show];
-        [alert release];
     }
 }
 

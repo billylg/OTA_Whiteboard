@@ -55,61 +55,41 @@ typedef struct color_marker_ {
 @interface Draw2ViewController : UIViewController <NSStreamDelegate, Draw2InputViewDelegate,
                                                    UIImagePickerControllerDelegate, UINavigationControllerDelegate, 
                                                    CameraPreviewViewDelegate, Draw2SaveControllerDelegate, ImportControllerDelegate> {
-    NSMutableArray *points;
-    NSMutableData *data;  // this possibly not needed
-    NSString *sessionID;
-    NSString *userID;
-    NSString *serverIP;
-    NSDate *dateTime;
-    NSTimer *timer;
-    NSInputStream *inputStream;
-    NSOutputStream *outputStream;
-    NSOutputStream *imageOutStream;
-    NSInputStream *imageInStream;
-    NSOperationQueue* toServerQ;
-    NSOperationQueue* fromServerQ;
+    
     draw_mode_t mode;
     ui_color_t color;
-    NSInteger readIndex;
-    NSInteger pageIndex;
     network_op_t netOp;
-    UIImage *imageToUpload;
-    NSInteger fileSize;
-    NSMutableData *rawData;
-    NSInteger rawBytesRead;
-    NSString *clientHost;
-    NSInteger clientPort;
-    NSMutableArray *markerArray;
-    UIPopoverController *popOver;
-    UIButton *pensil;
-    NSMutableDictionary *lastPointFromUser;
-    IBOutlet UIButton *connectionButton;
-    Boolean connected; 
 }
 
-@property (nonatomic, retain) NSMutableArray *points;
-@property (nonatomic, retain) NSMutableData *data;
-@property (nonatomic, retain) NSString *sessionID;
-@property (nonatomic, copy) NSDate *dateTime;
-@property (nonatomic, retain) NSInputStream *inputStream;
-@property (nonatomic, retain) NSOutputStream *outputStream;
-@property (nonatomic, retain) NSOutputStream *imageOutStream;
-@property (nonatomic, retain) NSInputStream *imageInStream;
-@property (nonatomic, retain) NSOperationQueue *toServerQ;
-@property (nonatomic, retain) NSOperationQueue *fromServerQ;
-@property (nonatomic, retain) NSString *userID;
-@property (nonatomic, retain) NSString *serverIP;
-@property (nonatomic, retain) UIImage *imageToUpload;
-@property (nonatomic, retain) NSMutableData *rawData;
-@property (nonatomic, retain) NSString *clientHost;
-@property (nonatomic, retain) NSMutableArray *markerArray;
-@property (nonatomic, retain) UIPopoverController *popOver;
-@property (nonatomic, retain) NSMutableDictionary *lastPointFromUser;
-@property (nonatomic, retain) IBOutlet UIButton *connectionButton;
+@property (nonatomic, strong) NSMutableArray *points;
+@property (nonatomic, strong) NSMutableData *data;
+@property (nonatomic, copy) NSString *sessionID;
+@property (nonatomic, strong) NSDate *dateTime;
+@property (nonatomic, strong) NSInputStream *inputStream;
+@property (nonatomic, strong) NSOutputStream *outputStream;
+@property (nonatomic, strong) NSOutputStream *imageOutStream;
+@property (nonatomic, strong) NSInputStream *imageInStream;
+@property (nonatomic, strong) NSOperationQueue *toServerQ;
+@property (nonatomic, strong) NSOperationQueue *fromServerQ;
+@property (nonatomic, copy) NSString *userID;
+@property (nonatomic, copy) NSString *serverIP;
+@property (nonatomic, strong) UIImage *imageToUpload;
+@property (nonatomic, strong) NSMutableData *rawData;
+@property (nonatomic, copy) NSString *clientHost;
+@property (nonatomic, strong) NSMutableArray *markerArray;
+@property (nonatomic, strong) UIPopoverController *popOver;
+@property (nonatomic, strong) NSMutableDictionary *lastPointFromUser;
+@property (nonatomic, strong) IBOutlet UIButton *connectionButton;
+@property (nonatomic) NSInteger clientPort;
+@property (nonatomic, weak) NSTimer *timer;
+@property (nonatomic) NSInteger readIndex;
+@property (nonatomic) NSInteger pageIndex;
+@property (nonatomic) NSInteger fileSize;
+@property (nonatomic) NSInteger rawBytesRead;
+@property (nonatomic, strong) UIButton *pensil;
+@property (nonatomic) Boolean connected;
 
-//- (void) refreshView;
-//- (IBAction) rePlay:(id)sender;
-//- (IBAction) serializeData:(id)sender;
+
 - (IBAction) sendPoints:(id)sender;
 - (IBAction) startSession:(id)sender;
 - (IBAction) getPoints:(id)sender;

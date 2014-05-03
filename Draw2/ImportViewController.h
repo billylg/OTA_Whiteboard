@@ -17,15 +17,11 @@
 @end
 
 @interface ImportViewController : UITableViewController {
-    NSArray *cellTitle;
-    Draw2ViewController *parent;
-    id<ImportControllerDelegate> delegate;
-    UIPopoverController *popOverController;
 }
 
-@property (nonatomic, retain) NSArray *cellTitle;
-@property (nonatomic, retain) Draw2ViewController *parent;
-@property (assign) id<ImportControllerDelegate> delegate;
-@property (nonatomic, retain) UIPopoverController *popOverController;
+@property (nonatomic, strong) NSArray *cellTitle;
+@property (nonatomic, strong) Draw2ViewController *parent;
+@property (copy) id<ImportControllerDelegate> delegate;
+@property (nonatomic, strong) UIPopoverController *popOverController;
 
 @end

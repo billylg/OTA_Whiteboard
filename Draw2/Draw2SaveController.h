@@ -17,14 +17,11 @@
 
 
 @interface Draw2SaveController : UITableViewController <MFMailComposeViewControllerDelegate> {
-    NSArray *cellTitle;
-    UIImage *mainImage;
-    id<Draw2SaveControllerDelegate> delegate;
 }
 
 @property (nonatomic, retain) NSArray *cellTitle;
 @property (nonatomic, retain) UIImage *mainImage;
-@property (assign) id<Draw2SaveControllerDelegate> delegate;
+@property (copy) id<Draw2SaveControllerDelegate> delegate;
 
 -(void) sendPictureToView:(UIImage *)image;
 

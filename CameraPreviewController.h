@@ -18,14 +18,11 @@
 
 
 @interface CameraPreviewController : UIViewController {
-    IBOutlet UIView *vImagePreview;
-    AVCaptureStillImageOutput *stillImageOutput;
-    id <CameraPreviewViewDelegate> delegate;
 }
 
-@property(nonatomic, retain) IBOutlet UIView *vImagePreview;
-@property(nonatomic, retain) AVCaptureStillImageOutput *stillImageOutput;
-@property (assign) id <CameraPreviewViewDelegate> delegate;
+@property(nonatomic, strong) IBOutlet UIView *vImagePreview;
+@property(nonatomic, strong) AVCaptureStillImageOutput *stillImageOutput;
+@property (copy) id <CameraPreviewViewDelegate> delegate;
 
 -(IBAction) captureNow;
 

@@ -21,13 +21,12 @@
     IBOutlet UITextField *ipTextField;
     IBOutlet UITextField *sessionTextField;
     IBOutlet UITextField *userTextField;
-    id <Draw2InputViewDelegate> delegate;
 }
 
 @property (nonatomic, retain) UITextField *ipTextField;
 @property (nonatomic, retain) UITextField *sessionTextField;
 @property (nonatomic, retain) UITextField *userTextField;
-@property (assign) id <Draw2InputViewDelegate> delegate;
+@property (copy) id <Draw2InputViewDelegate> delegate;
 
 -(IBAction) onDone:(id)sender;
 

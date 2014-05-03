@@ -26,12 +26,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [stillImageOutput release];
-    [super dealloc];
-}
-
 - (void)didReceiveMemoryWarning
 {
     // Releases the view if it doesn't have a superview.
@@ -84,11 +78,11 @@
 	}
 	[session addInput:input];
     
-    stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+    self.stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
     NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys: AVVideoCodecJPEG, AVVideoCodecKey, nil];
-    [stillImageOutput setOutputSettings:outputSettings];
+    [self.stillImageOutput setOutputSettings:outputSettings];
     
-    [session addOutput:stillImageOutput];
+    [session addOutput:self.stillImageOutput];
 	[session startRunning];
 }
 
@@ -110,7 +104,7 @@
 -(IBAction) captureNow
 {
 	AVCaptureConnection *videoConnection = nil;
-	for (AVCaptureConnection *connection in stillImageOutput.connections)
+	for (AVCaptureConnection *connection in self.stillImageOutput.connections)
 	{
 		for (AVCaptureInputPort *port in [connection inputPorts])
 		{
@@ -123,8 +117,8 @@
 		if (videoConnection) { break; }
 	}
     
-	NSLog(@"about to request a capture from: %@", stillImageOutput);
-	[stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error)
+	NSLog(@"about to request a capture from: %@", self.stillImageOutput);
+	[self.stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error)
      {
 		 CFDictionaryRef exifAttachments = CMGetAttachment( imageSampleBuffer, kCGImagePropertyExifDictionary, NULL);
 		 if (exifAttachments)
@@ -137,14 +131,13 @@
          
          NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
          UIImage *image = [[UIImage alloc] initWithData:imageData];
-         NSLog(@"image orientation is %d", [image imageOrientation]);
+         NSLog(@"image orientation is %ld", [image imageOrientation]);
          
          // calculate the size of the rotated view's containing box for our drawing space
          UIView *rotatedViewBox = [[UIView alloc] initWithFrame:CGRectMake(0,0,image.size.width, image.size.height)];
          CGAffineTransform t = CGAffineTransformMakeRotation(2*M_PI);
          rotatedViewBox.transform = t;
          CGSize rotatedSize = rotatedViewBox.frame.size;
-         [rotatedViewBox release];
          
          // Create the bitmap context
          UIGraphicsBeginImageContext(rotatedSize);

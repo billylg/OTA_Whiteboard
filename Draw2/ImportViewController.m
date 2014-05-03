@@ -23,16 +23,9 @@
     self = [super initWithStyle:style];
     if (self) {
         // Custom initialization
-        cellTitle = [[NSArray arrayWithObjects:@"Camera", @"Photo Album", nil] retain]; 
+        self.cellTitle = [NSArray arrayWithObjects:@"Camera", @"Photo Album", nil];
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [cellTitle release];
-    [parent release];
-    [super dealloc];
 }
 
 - (void)didReceiveMemoryWarning
@@ -109,7 +102,7 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
     // Configure the cell...
@@ -174,7 +167,6 @@
         CameraPreviewController *cameraView = [[CameraPreviewController alloc] init];
         cameraView.delegate = parent;
         [self presentModalViewController:cameraView animated:YES];
-        [cameraView release];
 
     } else {
         NSLog(@"select photo albums");

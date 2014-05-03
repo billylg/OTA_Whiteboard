@@ -17,6 +17,8 @@
 		9C15B123190B6B5100BAFC97 /* ASINetworkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C15B118190B6B5100BAFC97 /* ASINetworkQueue.m */; };
 		9C15B124190B6B5100BAFC97 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C15B11B190B6B5100BAFC97 /* Reachability.m */; };
 		9C15B126190B6BDC00BAFC97 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C15B125190B6BDC00BAFC97 /* libz.dylib */; };
+		9C15B12B191472FF00BAFC97 /* start-trans.png in Resources */ = {isa = PBXBuildFile; fileRef = 9C15B12A191472FF00BAFC97 /* start-trans.png */; };
+		9C15B12D1914731100BAFC97 /* join_trans.png in Resources */ = {isa = PBXBuildFile; fileRef = 9C15B12C1914731100BAFC97 /* join_trans.png */; };
 		B30040691468D95500ECAA10 /* connected.png in Resources */ = {isa = PBXBuildFile; fileRef = B30040671468D95500ECAA10 /* connected.png */; };
 		B300406A1468D95500ECAA10 /* disconnected.png in Resources */ = {isa = PBXBuildFile; fileRef = B30040681468D95500ECAA10 /* disconnected.png */; };
 		B3004077146BB80B00ECAA10 /* ImportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3004075146BB80B00ECAA10 /* ImportViewController.m */; };
@@ -94,6 +96,8 @@
 		9C15B11A190B6B5100BAFC97 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		9C15B11B190B6B5100BAFC97 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		9C15B125190B6BDC00BAFC97 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		9C15B12A191472FF00BAFC97 /* start-trans.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "start-trans.png"; path = "icons/start-trans.png"; sourceTree = "<group>"; };
+		9C15B12C1914731100BAFC97 /* join_trans.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = join_trans.png; path = icons/join_trans.png; sourceTree = "<group>"; };
 		B30040671468D95500ECAA10 /* connected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = connected.png; path = icons/connected.png; sourceTree = "<group>"; };
 		B30040681468D95500ECAA10 /* disconnected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = disconnected.png; path = icons/disconnected.png; sourceTree = "<group>"; };
 		B3004074146BB80A00ECAA10 /* ImportViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportViewController.h; sourceTree = "<group>"; };
@@ -199,6 +203,8 @@
 		B38E1B17144D4DA1009CE64A /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				9C15B12C1914731100BAFC97 /* join_trans.png */,
+				9C15B12A191472FF00BAFC97 /* start-trans.png */,
 				B30040671468D95500ECAA10 /* connected.png */,
 				B30040681468D95500ECAA10 /* disconnected.png */,
 				B38E1B63145279CA009CE64A /* black_trans.png */,
@@ -415,6 +421,7 @@
 				B38E1B6C145279CA009CE64A /* black_trans.png in Resources */,
 				B38E1B6D145279CA009CE64A /* blue_trans.png in Resources */,
 				B38E1B6E145279CA009CE64A /* camera_trans.png in Resources */,
+				9C15B12D1914731100BAFC97 /* join_trans.png in Resources */,
 				B38E1B6F145279CA009CE64A /* delete_trans.png in Resources */,
 				B38E1B70145279CA009CE64A /* earser_trans.png in Resources */,
 				B38E1B71145279CA009CE64A /* green_trans.png in Resources */,
@@ -424,6 +431,7 @@
 				B38E1B7914528D91009CE64A /* CameraPreviewController.xib in Resources */,
 				B30040691468D95500ECAA10 /* connected.png in Resources */,
 				B300406A1468D95500ECAA10 /* disconnected.png in Resources */,
+				9C15B12B191472FF00BAFC97 /* start-trans.png in Resources */,
 				B3004078146BB80B00ECAA10 /* ImportViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -556,6 +564,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -583,6 +592,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
