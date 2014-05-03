@@ -7,13 +7,13 @@
 //
 
 #import "Draw2ViewController.h"
-#import "ASIHTTPRequest.h"
 #import "Draw2View.h"
 #import "Draw2InputViewController.h"
 #import "DrawContext.h"
 #import "Draw2SaveController.h"
 #import "CameraPreviewController.h"
 #import "ImportViewController.h"
+#import "AFHTTPRequestOperationManager.h"
 
 @implementation Draw2ViewController
 
@@ -91,14 +91,13 @@
     [drawView updateView:context.dataPointArray withColor:context.colorString];
 }
 
-- (void) receiveDataFromServer:(NSString *)input
+- (void)receiveDataFromServer:(NSString *)input
 {
     NSInteger j, input_len;
     CGPoint point;
     NSValue *pointValue;
     NSString *userName;
     NSRange search_range, range, segment_range;
-    SBJsonParser *jsonParser = [[SBJsonParser alloc] init];
     NSMutableArray *inputArray = [[NSMutableArray alloc] init];
     //NSMutableString *jsonString = [[NSMutableString alloc] initWithCapacity:40];
     NSInteger index = 0;
@@ -124,7 +123,13 @@
         [inputArray addObject:segment];
     }
     for (NSString *s in inputArray) {
-        NSDictionary *dict = [NSDictionary dictionaryWithDictionary:(NSDictionary *)[jsonParser objectWithString:s]];
+		uint8_t buffer[4096];
+		NSUInteger usedLength;
+		NSRange range = NSMakeRange(0, [s length]);
+		[s getBytes:buffer maxLength:4096 usedLength:&usedLength encoding:NSUTF8StringEncoding options:NSStringEncodingConversionAllowLossy range:range remainingRange:NULL];
+		NSData *jsonData = [NSData dataWithBytes:buffer length:usedLength];
+		NSError *error;
+		NSDictionary *dict = [NSDictionary dictionaryWithDictionary:(NSDictionary *)[NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error]];
         if ([dict valueForKey:@"request"] != nil) {
             if ([[dict valueForKey:@"request"] isEqualToString:@"getState"]) {
                 NSLog(@"received request to upload screen shot to server");
@@ -196,7 +201,7 @@
                 }
             } else if ([[dict valueForKey:@"request"] isEqualToString:@"updateData"]) {
                 if ([dict valueForKey:@"user"] != nil) {
-                    self.userName = [dict valueForKey:@"user"];
+                    userName = [dict valueForKey:@"user"];
                     if ([dict valueForKey:@"data"] != nil) {
                         NSString *colorStr = [dict valueForKey:@"color"];
                         NSMutableArray *tempArray = [[NSMutableArray alloc] init];
@@ -657,7 +662,7 @@
     }];
 }
 
-- (IBAction) joinSession:(id)sender
+- (IBAction)joinSession:(id)sender
 {
     Draw2InputViewController *modalView = [[Draw2InputViewController alloc] init];
     modalView.delegate = self;
@@ -668,7 +673,7 @@
     }];
 }
 
-- (IBAction) sendPoints:(id)sender
+- (IBAction)sendPoints:(id)sender
 {
     int i;
     CGPoint point;
@@ -698,85 +703,75 @@
     [jsonString appendString:@"]}"];
     NSLog(@"json string:\n%@", jsonString);
     
-    NSURL *url = [NSURL URLWithString:@"http://localhost:8888/draw/postData"];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    [request appendPostData:[jsonString dataUsingEncoding:NSUTF8StringEncoding]];
-    [request setDelegate:self];
-    [request startAsynchronous];
-    
-    /* clear points here, get the points from server to reconstruct the whole drawing */
-    NSLog(@"sending %lu points to the server\n", (unsigned long)[self.points count]);
-    [self.points removeAllObjects];
-    [self.view drawRect:[self.view bounds]];
+	NSLog(@"sending %lu points to the server\n", (unsigned long)[self.points count]);
+	AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+	manager.responseSerializer = [AFJSONResponseSerializer serializer];
+	NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+	[parameters setObject:jsonString forKey:@"data"];
+	[manager POST:@"http://localhost:8888/draw/postData" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+		NSLog(@"%@", responseObject);
+		/* clear points here, get the points from server to reconstruct the whole drawing */
+		[self.points removeAllObjects];
+		[self.view drawRect:[self.view bounds]];
+	} failure:nil];
+	
 }
 
-- (IBAction) getPoints:(id)sender
+- (IBAction)getPoints:(id)sender
 {
-    NSMutableString *URL = [[NSMutableString alloc] initWithString:@"http://localhost:8888/draw/getAllData?sessionID="];
-    [URL appendString:self.sessionID];
-    [URL appendFormat:@"&timestamp=%f", [self.dateTime timeIntervalSinceReferenceDate]];
-    NSLog(@"GET URL: %@", URL);
-    NSURL *url = [NSURL URLWithString:URL];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    [request setRequestMethod:@"GET"];
-    [request setDelegate:self];
-    [request startAsynchronous];
+	AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+	manager.responseSerializer = [AFJSONResponseSerializer serializer];
+	NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+	[parameters setObject:self.sessionID forKey:@"sessionID"];
+	[parameters setObject:[NSNumber numberWithInteger:[self.dateTime timeIntervalSinceReferenceDate]] forKey:@"timestamp"];
+	[manager GET:@"http://localhost:8888/draw/getAllData" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+		int i, j;
+		CGPoint point;
+		NSValue *pointValue;
+		// Use when fetching text data
+		NSLog(@"received http response: %@", responseObject);
+		NSDictionary *dict = (NSDictionary *)responseObject;
+		if ([dict valueForKey:@"sessionID"] != nil) {
+			self.sessionID = [dict valueForKey:@"sessionID"] ;
+		}
+		NSLog(@"sessionID = %@", self.sessionID);
+		if ([dict valueForKey:@"data"] != nil) {
+			NSArray *dataArray = (NSArray *)[dict valueForKey:@"data"];
+			for (j = 0; j < [dataArray count]; j++) {
+				NSDictionary *element = (NSDictionary *)[dataArray objectAtIndex:j];
+				NSArray *coordArray = [element valueForKey:@"data"];
+				NSLog(@"there are %lu element in the array\n", (unsigned long)[coordArray count]);
+				for (i = 0; i < [coordArray count]; i++) {
+					NSDictionary *coordinatePt = (NSDictionary *)[coordArray objectAtIndex:i];
+					point.x = [[coordinatePt valueForKey:@"x"] doubleValue];
+					point.y = [[coordinatePt valueForKey:@"y"] doubleValue];
+					pointValue = [NSValue valueWithCGPoint:point];
+					[self.points addObject:pointValue];
+					NSLog(@"%f, %f", [pointValue CGPointValue].x, [pointValue CGPointValue].y);
+				}
+			}
+			[self.view drawRect:[self.view bounds]];
+		}
+	} failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+		NSLog(@"http request return error, error description: %@", [error localizedDescription]);
+	}];
 }
 
-- (void)requestFinished:(ASIHTTPRequest *)request
-{
-    int i, j;
-    CGPoint point;
-    NSValue *pointValue;
-    // Use when fetching text data
-    SBJsonParser *jsonParser = [[SBJsonParser alloc] init];
-    NSString *responseString = [request responseString];
-    NSLog(@"received http response: %@", responseString);
-    NSDictionary *dict = (NSDictionary *)[jsonParser objectWithString:responseString];
-    if ([dict valueForKey:@"sessionID"] != nil) {
-        self.sessionID = [dict valueForKey:@"sessionID"] ;
-    }
-    NSLog(@"sessionID = %@", self.sessionID);
-    if ([dict valueForKey:@"data"] != nil) {
-        NSArray *dataArray = (NSArray *)[dict valueForKey:@"data"];
-        for (j = 0; j < [dataArray count]; j++) {
-            NSDictionary *element = (NSDictionary *)[dataArray objectAtIndex:j];
-            NSArray *coordArray = [element valueForKey:@"data"];
-            NSLog(@"there are %lu element in the array\n", (unsigned long)[coordArray count]);
-            for (i = 0; i < [coordArray count]; i++) {
-                NSDictionary *coordinatePt = (NSDictionary *)[coordArray objectAtIndex:i];
-                point.x = [[coordinatePt valueForKey:@"x"] doubleValue];
-                point.y = [[coordinatePt valueForKey:@"y"] doubleValue];
-                pointValue = [NSValue valueWithCGPoint:point];
-                [self.points addObject:pointValue];
-                NSLog(@"%f, %f", [pointValue CGPointValue].x, [pointValue CGPointValue].y);
-            }
-        }
-        [self.view drawRect:[self.view bounds]];
-    }
-}
-
-- (void)requestFailed:(ASIHTTPRequest *)request
-{
-    NSError *error = [request error];
-    NSLog(@"http request return error, error description: %@", [error localizedDescription]);
-}
-
--(void) disMissSaveDialog 
+-(void)disMissSaveDialog
 {
     if (self.popOver != nil) {
         [self.popOver dismissPopoverAnimated:NO];
     }
 }
 
--(void) disMissImportDialog 
+-(void)disMissImportDialog
 {
     if (self.popOver != nil) {
         [self.popOver dismissPopoverAnimated:NO];
     }
 }
 
--(IBAction) saveDrawing:(id)sender
+-(IBAction)saveDrawing:(id)sender
 {
     CGFloat height;
     UIButton *saveButton = (UIButton *)sender;
@@ -799,7 +794,7 @@
                            animated:YES];
 }
 
-- (IBAction) deleteDrawing:(id)sender
+- (IBAction)deleteDrawing:(id)sender
 {
     Draw2View *imgView;
     

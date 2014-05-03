@@ -66,6 +66,7 @@
 		B3F0C2CC1419BF2100937D6C /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F0C2CB1419BF2100937D6C /* CFNetwork.framework */; };
 		B3F0C2CE1419BF3100937D6C /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F0C2CD1419BF3100937D6C /* SystemConfiguration.framework */; };
 		B3F0C2D01419BF3B00937D6C /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F0C2CF1419BF3B00937D6C /* MobileCoreServices.framework */; };
+		F16616231914CC0E00E50C5A /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F16616221914CC0E00E50C5A /* Security.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -158,6 +159,7 @@
 		B3F0C2CB1419BF2100937D6C /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		B3F0C2CD1419BF3100937D6C /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		B3F0C2CF1419BF3B00937D6C /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		F16616221914CC0E00E50C5A /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +167,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F16616231914CC0E00E50C5A /* Security.framework in Frameworks */,
 				9C15B126190B6BDC00BAFC97 /* libz.dylib in Frameworks */,
 				B38E1B831452A0BD009CE64A /* QuartzCore.framework in Frameworks */,
 				B38E1B8114528DDA009CE64A /* ImageIO.framework in Frameworks */,
@@ -286,6 +289,7 @@
 		B3F0C27F140C045700937D6C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F16616221914CC0E00E50C5A /* Security.framework */,
 				9C15B125190B6BDC00BAFC97 /* libz.dylib */,
 				B3F0C280140C045700937D6C /* UIKit.framework */,
 				B3F0C282140C045700937D6C /* Foundation.framework */,
@@ -494,18 +498,18 @@
 		B3F0C29B140C045700937D6C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "\"/Users/biliang/iPhoneAppDev/Draw2\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
-				SDKROOT = iphoneos4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
@@ -513,16 +517,16 @@
 		B3F0C29C140C045700937D6C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "\"/Users/biliang/iPhoneAppDev/Draw2\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				SDKROOT = iphoneos4.3;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
@@ -543,7 +547,7 @@
 				GCC_PREFIX_HEADER = "Draw2/Draw2-Prefix.pch";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "Draw2/Draw2-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				"LIBRARY_SEARCH_PATHS[arch=*]" = "\"/Users/biliang/iPhoneAppDev/Draw2\"";
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-ObjC",
@@ -570,7 +574,7 @@
 				GCC_PREFIX_HEADER = "Draw2/Draw2-Prefix.pch";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "Draw2/Draw2-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				"LIBRARY_SEARCH_PATHS[arch=*]" = "\"/Users/biliang/iPhoneAppDev/Draw2\"";
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-ObjC",

@@ -21,7 +21,7 @@
 
 @property (nonatomic, strong) NSArray *cellTitle;
 @property (nonatomic, strong) Draw2ViewController *parent;
-@property (copy) id<ImportControllerDelegate> delegate;
+@property (nonatomic, weak) id<ImportControllerDelegate> delegate;
 @property (nonatomic, strong) UIPopoverController *popOverController;
 
 @end

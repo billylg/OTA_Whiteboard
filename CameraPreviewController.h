@@ -22,7 +22,7 @@
 
 @property(nonatomic, strong) IBOutlet UIView *vImagePreview;
 @property(nonatomic, strong) AVCaptureStillImageOutput *stillImageOutput;
-@property (copy) id <CameraPreviewViewDelegate> delegate;
+@property (nonatomic, weak) id <CameraPreviewViewDelegate> delegate;
 
 -(IBAction) captureNow;
 

@@ -189,7 +189,7 @@
         [picker addAttachmentData:data mimeType:@"image/png" fileName:@"CameraImage"];
         
         // Show email view	
-        [self presentModalViewController:picker animated:YES];
+        [self presentViewController:picker animated:YES completion:nil];
         
         // Release picker
         [self.delegate disMissSaveDialog];
@@ -221,7 +221,7 @@
 {
     // Called once the email is sent
     // Remove the email view controller	
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
