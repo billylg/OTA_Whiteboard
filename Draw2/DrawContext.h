@@ -10,11 +10,9 @@
 
 
 @interface DrawContext : NSObject {
-    NSMutableArray *dataPointArray;
-    NSString *colorString;
 }
 
-@property (nonatomic, retain) NSMutableArray *dataPointArray;
-@property (nonatomic, retain) NSString *colorString;
+@property (nonatomic, strong) NSMutableArray *dataPointArray;
+@property (nonatomic, copy) NSString *colorString;
 
 @end

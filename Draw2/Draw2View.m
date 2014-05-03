@@ -207,9 +207,4 @@
     UIGraphicsEndImageContext();
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
 @end

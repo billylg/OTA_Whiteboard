@@ -14,11 +14,4 @@
 @synthesize dataPointArray;
 @synthesize colorString;
 
-- (void)dealloc
-{
-    [dataPointArray release];
-    [colorString release];
-    [super dealloc];
-}
-
 @end
